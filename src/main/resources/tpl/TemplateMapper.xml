@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.tgm.msf.mappers.#beanName#Mapper">
+
+    <select id="get#beanName#CountSQL" parameterType="#beanName#Bean" resultType="java.lang.Integer">
+        SELECT COUNT(T.#pkUpperName#)
+        FROM #tableName# T
+        WHERE T.DEL_FLAG = '0'
+        #mapperFilterColumns#
+    </select>
+
+    <select id="get#beanName#ListSQL" parameterType="#beanName#Bean" resultType="#beanName#Bean">
+        SELECT
+        T.*
+        FROM
+        #tableName# T
+        WHERE T.DEL_FLAG = '0'
+        #mapperFilterColumns#
+        ORDER BY
+        T.UPDATE_ON DESC
+        <if test="limit != 0">LIMIT #{offset}, #{limit}</if>
+    </select>
+
+    <select id="get#beanName#SQL" parameterType="#beanName#Bean" resultType="#beanName#Bean">
+        SELECT T.*
+        FROM #tableName# T
+        WHERE T.DEL_FLAG = '0'
+          AND T.#pkUpperName# = #{#pkName#}
+    </select>
+
+    <insert id="insert#beanName#SQL" parameterType="#beanName#Bean">
+        INSERT INTO #tableName# (
+                #columns#
+                )
+        VALUES (
+                       #values#
+                       )
+    </insert>
+
+    <update id="update#beanName#SQL" parameterType="#beanName#Bean">
+        UPDATE
+                #tableName#
+        SET
+            #updateColumns#,
+            UPDATE_BY = #{update_by}
+        WHERE #pkUpperName# = #{#pkName#}
+    </update>
+
+    <delete id="delete#beanName#SQL" parameterType="#beanName#Bean">
+        UPDATE
+                #tableName#
+        SET DEL_FLAG  = 1,
+            UPDATE_BY = #{update_by}
+        WHERE #pkUpperName# = #{#pkName#}
+    </delete>
+
+    <delete id="delete#beanName#BatchSQL" parameterType="java.util.Map">
+        UPDATE
+        #tableName#
+        SET
+        DEL_FLAG = '1',
+        UPDATE_BY = #{update_by}
+        <where>
+            <foreach collection="list" item="item" index="index" separator="OR">
+                #pkUpperName# = #{item.#pkName#}
+            </foreach>
+        </where>
+    </delete>
+
+</mapper>
